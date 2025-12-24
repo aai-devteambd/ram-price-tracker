@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { fetchAllProducts, fetchProductData, refreshProductData } from '../services/api';
+import api from '../services/api';
 
 const useProductStore = create((set, get) => ({
   products: [],
@@ -15,6 +16,27 @@ const useProductStore = create((set, get) => ({
     } catch (error) {
       set({ error: error.message, loading: false });
       console.error('Failed to fetch products:', error);
+    }
+  },
+
+  // Reload all data from backend and refresh products
+  reloadData: async () => {
+    set({ loading: true, error: null });
+    try {
+      // First trigger the backend reload
+      await api.reloadAllData();
+      
+      // Wait a bit for the backend to process
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Then fetch the updated products
+      const products = await fetchAllProducts();
+      set({ products, loading: false });
+      return true;
+    } catch (error) {
+      set({ error: error.message, loading: false });
+      console.error('Failed to reload data:', error);
+      return false;
     }
   },
   

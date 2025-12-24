@@ -399,11 +399,37 @@ export const fetchGoogleShoppingResults = async (modelCode) => {
   }
 };
 
+/**
+ * Trigger manual reload of all data from the backend
+ */
+const reloadAllData = async () => {
+  console.log('🔄 Triggering manual data reload...');
+  try {
+    const response = await fetch('https://n8n.srv1013270.hstgr.cloud/webhook/ram-price-tracker/main/reload', {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+      },
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Failed to trigger reload: ${response.status} ${response.statusText}`);
+    }
+    
+    console.log('✅ Data reload triggered successfully');
+    return true;
+  } catch (error) {
+    console.error('❌ Error triggering data reload:', error);
+    throw error;
+  }
+};
+
 const api = {
   fetchProductData,
   fetchAllProducts,
   refreshProductData,
   fetchGoogleShoppingResults,
+  reloadAllData,
 };
 
 export default api;

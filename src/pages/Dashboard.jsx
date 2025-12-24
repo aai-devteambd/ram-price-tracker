@@ -7,6 +7,11 @@ const Dashboard = () => {
   const loading = useProductStore((state) => state.loading);
   const error = useProductStore((state) => state.error);
   const fetchProducts = useProductStore((state) => state.fetchProducts);
+  const reloadData = useProductStore((state) => state.reloadData);
+
+  const handleRefresh = async () => {
+    await reloadData();
+  };
   
   useEffect(() => {
     // Fetch products on component mount only
@@ -26,14 +31,73 @@ const Dashboard = () => {
         margin: '0 auto'
       }}>
         <header style={{ marginBottom: '40px' }}>
-          <h1 style={{
-            fontSize: '36px',
-            fontWeight: '700',
-            color: '#1a1a1a',
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
             marginBottom: '8px'
           }}>
-            RAM Price Tracker
-          </h1>
+            <h1 style={{
+              fontSize: '36px',
+              fontWeight: '700',
+              color: '#1a1a1a',
+              margin: '0'
+            }}>
+              RAM Price Tracker
+            </h1>
+            <button
+              onClick={handleRefresh}
+              disabled={loading}
+              style={{
+                padding: '12px 24px',
+                fontSize: '16px',
+                fontWeight: '600',
+                color: 'white',
+                backgroundColor: loading ? '#94a3b8' : '#2563eb',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                transition: 'all 0.2s ease',
+                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
+              }}
+              onMouseEnter={(e) => {
+                if (!loading) {
+                  e.target.style.backgroundColor = '#1d4ed8';
+                  e.target.style.transform = 'translateY(-2px)';
+                  e.target.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.15)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!loading) {
+                  e.target.style.backgroundColor = '#2563eb';
+                  e.target.style.transform = 'translateY(0)';
+                  e.target.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
+                }
+              }}
+            >
+              <svg 
+                width="20" 
+                height="20" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round"
+                style={{
+                  animation: loading ? 'spin 1s linear infinite' : 'none'
+                }}
+              >
+                <polyline points="23 4 23 10 17 10"></polyline>
+                <polyline points="1 20 1 14 7 14"></polyline>
+                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+              </svg>
+              {loading ? 'Refreshing...' : 'Refresh Data'}
+            </button>
+          </div>
           <p style={{
             fontSize: '16px',
             color: '#6c757d'
